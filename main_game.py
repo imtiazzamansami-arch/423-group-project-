@@ -306,12 +306,21 @@ def update():
         player_x, player_y = naimur.get_player_position()
         player_width = naimur.get_character_width()
         player_height = naimur.get_character_height()
-        collision = sami.handle_obstacle_collisions(player_x, player_y, player_width, player_height)
-        if collision:
-            trigger_camera_shake(10)
-            naimur.handle_collision()
-            if sami.get_lives() <= 0:
-                game_state = "game_over"
+        is_dodging = False
+        if naimur.get_is_jumping():
+           if player_y > 150: # Adjust this value based on your jump height
+               is_dodging = True
+
+        if naimur.get_is_sliding():
+           player_height = player_height * 0.5 
+
+        if not is_dodging:
+             collision = sami.handle_obstacle_collisions(player_x, player_y, player_width, player_height)
+           if collision:
+              trigger_camera_shake(10)
+              naimur.handle_collision()
+              if sami.get_lives() <= 0:
+                 game_state = "game_over"
         token_collected = sami.handle_token_collection(player_x, player_y, player_width, player_height)
         if token_collected:
             trigger_camera_shake(3)
